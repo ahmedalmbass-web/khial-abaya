@@ -2233,9 +2233,20 @@ textarea {
   }
 
   .site-header .desktop-nav {
-    gap: 9px;
-    font-size: 10px;
-  }
+  gap: 8px;
+  font-size: 10px;
+  flex: 1;
+  justify-content: center;
+  min-width: 0;
+}
+
+.site-header .desktop-nav a {
+  white-space: nowrap;
+}
+
+.site-header .header-cta {
+  flex-shrink: 0;
+}
 
   .header-cta {
     min-height: 35px;
