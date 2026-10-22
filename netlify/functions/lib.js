@@ -210,15 +210,27 @@ if (data.image !== undefined) {
   return null;
 }
 
+
 async function getStoreProducts() {
   const store = getStore(STORE_NAME);
   const stored = await store.get(PRODUCTS_KEY, { type: "json" });
 
-  if (Array.isArray(stored)) return stored;
+  if (Array.isArray(stored)) {
+    const products = stored.filter(
+      product => !String(product.id || "").startsWith("demo-")
+    );
 
-  await store.setJSON(PRODUCTS_KEY, DEMO_PRODUCTS);
-  return DEMO_PRODUCTS;
+    if (products.length !== stored.length) {
+      await store.setJSON(PRODUCTS_KEY, products);
+    }
+
+    return products;
+  }
+
+  await store.setJSON(PRODUCTS_KEY, []);
+  return [];
 }
+
 
 async function saveStoreProducts(products) {
   const store = getStore(STORE_NAME);
