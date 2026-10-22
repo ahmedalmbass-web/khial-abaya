@@ -180,15 +180,28 @@ function validateProduct(data, partial = false) {
     }
   }
 
-  if (data.image !== undefined) {
-    if (typeof data.image !== "string" || data.image.length > 2000) {
-      return "رابط الصورة غير صحيح.";
-    }
+  
+if (data.image !== undefined) {
+  if (
+    typeof data.image !== "string" ||
+    data.image.length > 2000
+  ) {
+    return "رابط الصورة غير صحيح.";
+  }
 
-    if (data.image && !/^https:\/\/\S+$/i.test(data.image)) {
-      return "يجب أن يكون رابط الصورة HTTPS.";
+  if (data.image) {
+    const isHttpsUrl = /^https:\/\/\S+$/i.test(data.image);
+
+    const isInternalImage =
+      /^\/api\/image\?id=img_[0-9a-f]{8}-(?:[0-9a-f]{4}-){3}[0-9a-f]{12}$/i
+        .test(data.image);
+
+    if (!isHttpsUrl && !isInternalImage) {
+      return "يجب أن يكون رابط الصورة HTTPS أو مسار صورة داخليًا صالحًا.";
     }
   }
+}
+
 
   if (data.active !== undefined && typeof data.active !== "boolean") {
     return "حالة ظهور المنتج غير صحيحة.";
