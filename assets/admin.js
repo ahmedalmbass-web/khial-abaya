@@ -1,37 +1,32 @@
+
 (() => {
-  const loginPanel = document.getElementById("loginPanel");
-  const dashboard = document.getElementById("dashboard");
+  const $ = id => document.getElementById(id);
+  const loginPanel = $("loginPanel");
+  const dashboard = $("dashboard");
   if (!loginPanel || !dashboard) return;
 
-  const loginForm = document.getElementById("loginForm");
-  const loginMessage = document.getElementById("loginMessage");
-  const adminProducts = document.getElementById("adminProducts");
-  const productForm = document.getElementById("productForm");
-  const formTitle = document.getElementById("formTitle");
-  const saveButton = document.getElementById("saveProduct");
-  const formMessage = document.getElementById("formMessage");
-  const toast = document.getElementById("adminToast");
-
+  const loginForm = $("loginForm");
+  const productForm = $("productForm");
+  const fileInput = $("productFile");
+  const imageInput = $("productImage");
+  const previewBox = $("imagePreviewBox");
+  const preview = $("imagePreview");
+  const saveButton = $("saveProduct");
   let products = [];
   let toastTimer;
 
-  const $ = id => document.getElementById(id);
+  const escapeHTML = value => String(value ?? "").replace(/[&<>"']/g, char => ({
+    "&": "&amp;", "<": "&lt;", ">": "&gt;",
+    '"': "&quot;", "'": "&#39;"
+  })[char]);
 
-  const escapeHTML = (value = "") =>
-    String(value).replace(/[&<>"']/g, char => ({
-      "&": "&amp;",
-      "<": "&lt;",
-      ">": "&gt;",
-      '"': "&quot;",
-      "'": "&#39;"
-    })[char]);
-
-  function showToast(message) {
-    if (!toast) return;
-    toast.textContent = message;
-    toast.hidden = false;
+  function toast(message) {
+    $("adminToast").textContent = message;
+    $("adminToast").hidden = false;
     clearTimeout(toastTimer);
-    toastTimer = setTimeout(() => { toast.hidden = true; }, 3000);
+    toastTimer = setTimeout(() => {
+      $("adminToast").hidden = true;
+    }, 3500);
   }
 
   async function api(path, options = {}) {
@@ -39,8 +34,8 @@
       credentials: "same-origin",
       ...options,
       headers: {
-        "Content-Type": "application/json",
-        "Accept": "application/json",
+        Accept: "application/json",
+        ...(options.body ? { "Content-Type": "application/json" } : {}),
         ...(options.headers || {})
       }
     });
@@ -49,20 +44,20 @@
     try { data = await response.json(); } catch (_) {}
 
     if (!response.ok) {
-      throw new Error(data.error || "حدث خطأ. حاول مرة أخرى.");
+      throw new Error(data.error || "تعذر إكمال العملية.");
     }
     return data;
+  }
+
+  function showLogin() {
+    loginPanel.hidden = false;
+    dashboard.hidden = true;
   }
 
   function showDashboard() {
     loginPanel.hidden = true;
     dashboard.hidden = false;
     loadProducts();
-  }
-
-  function showLogin() {
-    loginPanel.hidden = false;
-    dashboard.hidden = true;
   }
 
   async function checkSession() {
@@ -75,24 +70,26 @@
     }
   }
 
-  loginForm?.addEventListener("submit", async event => {
+  loginForm.addEventListener("submit", async event => {
     event.preventDefault();
-    loginMessage.textContent = "";
-    const password = $("adminPassword").value;
+    $("loginMessage").textContent = "";
 
     try {
       await api("/api/auth", {
         method: "POST",
-        body: JSON.stringify({ action: "login", password })
+        body: JSON.stringify({
+          action: "login",
+          password: $("adminPassword").value
+        })
       });
       loginForm.reset();
       showDashboard();
     } catch (error) {
-      loginMessage.textContent = error.message;
+      $("loginMessage").textContent = error.message;
     }
   });
 
-  $("logoutButton")?.addEventListener("click", async () => {
+  $("logoutButton").addEventListener("click", async () => {
     try {
       await api("/api/auth", {
         method: "POST",
@@ -100,40 +97,116 @@
       });
     } catch (_) {}
     showLogin();
-    showToast("تم تسجيل الخروج.");
+    toast("تم تسجيل الخروج.");
   });
 
+  function previewFile(file) {
+    if (!file) {
+      previewBox.hidden = true;
+      preview.removeAttribute("src");
+      return;
+    }
+
+    preview.src = URL.createObjectURL(file);
+    previewBox.hidden = false;
+  }
+
+  fileInput.addEventListener("change", () => {
+    const file = fileInput.files[0];
+
+    if (!file) {
+      previewFile(null);
+      return;
+    }
+
+    const allowed = ["image/jpeg", "image/png", "image/webp"];
+
+    if (!allowed.includes(file.type)) {
+      fileInput.value = "";
+      previewFile(null);
+      toast("اختاري صورة JPG أو PNG أو WebP.");
+      return;
+    }
+
+    if (file.size > 3 * 1024 * 1024) {
+      fileInput.value = "";
+      previewFile(null);
+      toast("حجم الصورة أكبر من 3 ميجابايت.");
+      return;
+    }
+
+    previewFile(file);
+  });
+
+  $("removeImage").addEventListener("click", () => {
+    fileInput.value = "";
+    previewFile(null);
+  });
+
+  async function uploadImage(file) {
+    const base64 = await new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => {
+        const result = String(reader.result || "");
+        const comma = result.indexOf(",");
+        if (comma < 0) return reject(new Error("تعذر قراءة الصورة."));
+        resolve(result.slice(comma + 1));
+      };
+      reader.onerror = () => reject(new Error("تعذر قراءة الصورة."));
+      reader.readAsDataURL(file);
+    });
+
+    const result = await api("/api/upload-image", {
+      method: "POST",
+      body: JSON.stringify({
+        filename: file.name,
+        contentType: file.type,
+        data: base64
+      })
+    });
+
+    return result.url;
+  }
+
   function renderProducts() {
+    const list = $("adminProducts");
+
     if (!products.length) {
-      adminProducts.innerHTML = `<div class="empty-state">
-        <strong>لا توجد منتجات حتى الآن</strong>
-        أضيفي أول منتج من النموذج.
+      list.innerHTML = `<div class="empty-state">
+        <strong>لا توجد منتجات</strong>
+        أضيفي أول عباية من النموذج أعلاه.
       </div>`;
       return;
     }
 
-    adminProducts.innerHTML = products.map(product => `
+    list.innerHTML = products.map(product => `
       <div class="admin-product-row">
         <div>
           <strong>${escapeHTML(product.name)}</strong>
-          <small>${escapeHTML(product.category || "عبايات")} · ${escapeHTML(product.price)} ر.ي · ${product.active ? "ظاهر في المتجر" : "مخفي"}</small>
+          <small>${escapeHTML(product.category)} · ${
+            escapeHTML(product.price)
+          } ر.ي · ${product.active ? "ظاهر" : "مخفي"}</small>
         </div>
         <div class="admin-actions">
-          <button class="small-button" type="button" data-edit="${escapeHTML(product.id)}">تعديل</button>
-          <button class="small-button danger" type="button" data-delete="${escapeHTML(product.id)}">حذف</button>
+          <button class="small-button" type="button"
+                  data-edit="${escapeHTML(product.id)}">تعديل</button>
+          <button class="small-button danger" type="button"
+                  data-delete="${escapeHTML(product.id)}">حذف</button>
         </div>
       </div>
     `).join("");
   }
 
   async function loadProducts() {
-    adminProducts.innerHTML = `<div class="loading-state">جارٍ تحميل المنتجات...</div>`;
+    $("adminProducts").innerHTML =
+      `<p class="loading-state">جارٍ تحميل المنتجات...</p>`;
+
     try {
       const result = await api("/api/admin-products");
       products = Array.isArray(result.products) ? result.products : [];
       renderProducts();
     } catch (error) {
-      adminProducts.innerHTML = `<div class="empty-state">${escapeHTML(error.message)}</div>`;
+      $("adminProducts").textContent = error.message;
     }
   }
 
@@ -141,9 +214,11 @@
     productForm.reset();
     $("productId").value = "";
     $("productActive").checked = true;
-    formTitle.textContent = "إضافة منتج جديد";
+    $("formTitle").textContent = "إضافة عباية جديدة";
     saveButton.textContent = "حفظ المنتج";
-    formMessage.textContent = "";
+    $("formMessage").textContent = "";
+    fileInput.value = "";
+    previewFile(null);
   }
 
   function editProduct(id) {
@@ -152,70 +227,82 @@
 
     $("productId").value = product.id;
     $("productName").value = product.name || "";
-    $("productCategory").value = product.category || "عبايات";
+    $("productCategory").value = product.category || "";
     $("productPrice").value = product.price ?? "";
-    $("productImage").value = product.image || "";
     $("productBadge").value = product.badge || "";
     $("productDescription").value = product.description || "";
     $("productActive").checked = product.active !== false;
+    imageInput.value = product.image || "";
+    fileInput.value = "";
+    previewFile(null);
 
-    formTitle.textContent = "تعديل المنتج";
+    $("formTitle").textContent = "تعديل المنتج";
     saveButton.textContent = "حفظ التعديلات";
-    formMessage.textContent = "";
+    $("formMessage").textContent = "";
     productForm.scrollIntoView({ behavior: "smooth", block: "start" });
   }
 
-  adminProducts?.addEventListener("click", async event => {
-    const editButton = event.target.closest("[data-edit]");
-    const deleteButton = event.target.closest("[data-delete]");
+  $("adminProducts").addEventListener("click", async event => {
+    const edit = event.target.closest("[data-edit]");
+    const remove = event.target.closest("[data-delete]");
 
-    if (editButton) {
-      editProduct(editButton.dataset.edit);
+    if (edit) {
+      editProduct(edit.dataset.edit);
       return;
     }
 
-    if (deleteButton) {
-      const id = deleteButton.dataset.delete;
-      if (!confirm("هل أنت متأكد من حذف هذا المنتج؟")) return;
+    if (remove) {
+      const id = remove.dataset.delete;
+      if (!confirm("هل تريد حذف هذا المنتج؟")) return;
 
       try {
-        await api(`/api/admin-products/${encodeURIComponent(id)}`, {
-          method: "DELETE"
-        });
-        products = products.filter(product => String(product.id) !== String(id));
+        const result = await api(
+          `/api/admin-products/${encodeURIComponent(id)}`,
+          { method: "DELETE" }
+        );
+        products = Array.isArray(result.products)
+          ? result.products
+          : products.filter(p => String(p.id) !== String(id));
         renderProducts();
-        showToast("تم حذف المنتج.");
+        toast("تم حذف المنتج.");
       } catch (error) {
-        showToast(error.message);
+        toast(error.message);
       }
     }
   });
 
-  productForm?.addEventListener("submit", async event => {
+  productForm.addEventListener("submit", async event => {
     event.preventDefault();
-    formMessage.textContent = "";
+    $("formMessage").textContent = "";
     saveButton.disabled = true;
 
-    const id = $("productId").value;
-    const price = Number($("productPrice").value);
-
-    if (!Number.isFinite(price) || price < 0) {
-      formMessage.textContent = "أدخلي سعرًا صحيحًا.";
-      saveButton.disabled = false;
-      return;
-    }
-
-    const product = {
-      name: $("productName").value.trim(),
-      category: $("productCategory").value.trim(),
-      price,
-      image: $("productImage").value.trim(),
-      badge: $("productBadge").value.trim(),
-      description: $("productDescription").value.trim(),
-      active: $("productActive").checked
-    };
-
     try {
+      const id = $("productId").value;
+      let image = imageInput.value.trim();
+      const file = fileInput.files[0];
+
+      if (file) {
+        saveButton.textContent = "جارٍ رفع الصورة...";
+        image = await uploadImage(file);
+      }
+
+      const price = Number($("productPrice").value);
+      if (!Number.isFinite(price) || price < 0) {
+        throw new Error("أدخلي سعرًا صحيحًا.");
+      }
+
+      const product = {
+        name: $("productName").value.trim(),
+        category: $("productCategory").value.trim(),
+        price,
+        image,
+        badge: $("productBadge").value.trim(),
+        description: $("productDescription").value.trim(),
+        active: $("productActive").checked
+      };
+
+      saveButton.textContent = "جارٍ حفظ المنتج...";
+
       const result = await api("/api/admin-products", {
         method: id ? "PUT" : "POST",
         body: JSON.stringify(id ? { ...product, id } : product)
@@ -224,14 +311,20 @@
       products = result.products;
       renderProducts();
       resetForm();
-      showToast(id ? "تم تحديث المنتج." : "تمت إضافة المنتج.");
+      toast("تم حفظ المنتج بنجاح.");
     } catch (error) {
-      formMessage.textContent = error.message;
+      $("formMessage").textContent = error.message;
     } finally {
       saveButton.disabled = false;
+      if ($("productId").value) {
+        saveButton.textContent = "حفظ التعديلات";
+      } else {
+        saveButton.textContent = "حفظ المنتج";
+      }
     }
   });
 
-  $("resetForm")?.addEventListener("click", resetForm);
+  $("resetForm").addEventListener("click", resetForm);
+
   checkSession();
 })();
