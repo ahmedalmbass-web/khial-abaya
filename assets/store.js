@@ -160,16 +160,21 @@
     if (modalQty) modalQty.value = "1";
 
     if (modal) {
-      modal.hidden = false;
-      document.body.style.overflow = "hidden";
-      closeButton?.focus();
+  modal.hidden = false;
+  modal.setAttribute("aria-hidden", "false");
+  document.body.style.overflow = "hidden";
+  closeButton?.focus();
     }
   }
 
   function closeModal() {
-    if (modal) modal.hidden = true;
-    document.body.style.overflow = "";
-    selectedProduct = null;
+  if (modal) {
+    modal.hidden = true;
+    modal.setAttribute("aria-hidden", "true");
+  }
+
+  document.body.style.overflow = "";
+  selectedProduct = null;
   }
 
   function sendWhatsApp(product, details = false) {
