@@ -187,9 +187,11 @@
     }
 
     fillOptions(modalColor, product.colors, "اللون");
-    fillOptions(modalSize, product.sizes, "المقاس");
+fillOptions(modalSize, product.sizes, "المقاس");
 
-    if (modalQty) modalQty.value = "1";
+if (modalColor) modalColor.value = "";
+if (modalSize) modalSize.value = "";
+if (modalQty) modalQty.value = "1";
 
 
     if (modal) {
