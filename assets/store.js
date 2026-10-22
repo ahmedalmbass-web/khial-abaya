@@ -155,9 +155,42 @@
       }, { once: true });
     }
 
-    if (modalColor) modalColor.value = "";
-    if (modalSize) modalSize.value = "";
+    
+    function fillOptions(select, values, label) {
+      if (!select) return;
+
+      const options = Array.isArray(values)
+        ? [...new Set(values.filter(
+            value => typeof value === "string" && value.trim()
+          ).map(value => value.trim()))]
+        : [];
+
+      select.replaceChildren();
+
+      const placeholder = document.createElement("option");
+      placeholder.value = "";
+      placeholder.textContent = options.length
+        ? `اختاري ${label}`
+        : `لا توجد خيارات محددة`;
+      select.appendChild(placeholder);
+
+      options.forEach(value => {
+        const option = document.createElement("option");
+        option.value = value;
+        option.textContent = value;
+        select.appendChild(option);
+      });
+
+      select.disabled = options.length === 0;
+      select.required = options.length > 0;
+      select.hidden = options.length === 0;
+    }
+
+    fillOptions(modalColor, product.colors, "اللون");
+    fillOptions(modalSize, product.sizes, "المقاس");
+
     if (modalQty) modalQty.value = "1";
+
 
     if (modal) {
   modal.hidden = false;
