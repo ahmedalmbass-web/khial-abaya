@@ -2387,3 +2387,42 @@ textarea {
 }
 
 
+/* شعار خيال الأصلي */
+.brand-logo {
+  display: block;
+  width: 150px;
+  height: 64px;
+  object-fit: contain;
+  object-position: center;
+  flex-shrink: 0;
+  background-color: #ffffff;
+  border-radius: 4px;
+}
+
+/* محاذاة الشعار في أعلى وأسفل المتجر */
+.site-header .brand,
+.site-footer .brand {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+}
+
+.site-header .brand {
+  min-width: 0;
+}
+
+.site-footer .brand-logo {
+  width: 130px;
+  height: 56px;
+}
+
+@media (max-width: 480px) {
+  .brand-logo {
+    width: 115px;
+    height: 54px;
+  }
+}
+
+
+
