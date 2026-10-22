@@ -1,112 +1,155 @@
+
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="robots" content="noindex,nofollow">
-  <title>إدارة خيال</title>
-  <link href="https://fonts.googleapis.com/css2?family=Alexandria:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#201e1b">
+  <title>لوحة التحكم | Khial Abaya</title>
   <link rel="stylesheet" href="/assets/style.css">
 </head>
-<body class="admin-body">
+<body class="admin-page">
 
-<header class="admin-top">
-  <a class="brand" href="/">
-    <span class="brand-mark">خ</span>
-    <span><b>خَيَال</b><small>إدارة المتجر</small></span>
-  </a>
-  <a href="/">العودة إلى المتجر ↗</a>
-</header>
-
-<main class="admin-main">
-  <section id="login-panel" class="admin-card login-card">
-    <p class="eyebrow">مساحة خاصة</p>
-    <h1>إدارة المتجر</h1>
-    <p>سجّلي الدخول لإدارة المنتجات والأسعار والمخزون.</p>
-
-    <form id="login-form">
-      <label>كلمة مرور الإدارة
-        <input id="admin-password" type="password" autocomplete="current-password" required minlength="12">
-      </label>
-      <button class="button button-dark full" type="submit">تسجيل الدخول</button>
-      <p id="login-message" class="form-message"></p>
-    </form>
-  </section>
-
-  <section id="dashboard" hidden>
-    <div class="admin-heading">
-      <div>
-        <p class="eyebrow">لوحة التحكم</p>
-        <h1>منتجات خيال</h1>
-        <p>إدارة المنتجات والأسعار والمخزون.</p>
-      </div>
-      <button class="button button-outline" id="logout">تسجيل الخروج</button>
+  <header class="admin-topbar">
+    <div class="container admin-topbar-inner">
+      <a class="brand" href="/">
+        <span class="brand-en">KHIAL</span>
+        <span class="brand-ar">ABAYA</span>
+      </a>
+      <a class="button-outline" style="color:#201e1b;border-color:#d9cfc0"
+         href="/">عرض المتجر</a>
     </div>
+  </header>
 
-    <div class="admin-layout">
-      <form class="admin-card product-form" id="product-form">
-        <h2 id="form-title">إضافة منتج</h2>
-        <input type="hidden" id="product-id">
+  <main class="container admin-main">
 
-        <label>اسم المنتج
-          <input id="p-name" required maxlength="90">
-        </label>
+    <section id="loginPanel" class="admin-panel admin-login">
+      <span class="section-kicker">KHIAL ABAYA</span>
+      <h1 class="admin-title">مرحبًا بعودتك</h1>
+      <p class="admin-subtitle">سجّلي الدخول لإدارة منتجات المتجر.</p>
 
-        <label>وصف المنتج
-          <textarea id="p-description" required maxlength="500" rows="3"></textarea>
-        </label>
-
-        <div class="form-two">
-          <label>السعر
-            <input id="p-price" type="number" min="0" step="0.01" required>
-          </label>
-          <label>العملة
-            <select id="p-currency">
-              <option value="ر.ي">ر.ي</option>
-              <option value="ر.س">ر.س</option>
-              <option value="USD">USD</option>
-            </select>
-          </label>
+      <form id="loginForm">
+        <div class="form-field">
+          <label for="adminPassword">كلمة مرور الإدارة</label>
+          <input id="adminPassword" type="password"
+                 autocomplete="current-password" required>
         </div>
-
-        <label>رابط صورة HTTPS
-          <input id="p-image" type="url" required placeholder="https://">
-        </label>
-
-        <label>الألوان مفصولة بفاصلة
-          <input id="p-colors" required placeholder="أسود، بيج">
-        </label>
-
-        <label>المقاسات مفصولة بفاصلة
-          <input id="p-sizes" required placeholder="54، 56، 58">
-        </label>
-
-        <label>المخزون
-          <input id="p-stock" type="number" min="0" value="1" required>
-        </label>
-
-        <label class="checkbox-label">
-          <input id="p-active" type="checkbox" checked>
-          عرض المنتج في المتجر
-        </label>
-
-        <button class="button button-dark full" type="submit">حفظ المنتج</button>
-        <button class="button button-outline full" type="button" id="cancel-edit" hidden>إلغاء التعديل</button>
-        <p id="product-message" class="form-message"></p>
+        <p id="loginMessage" class="admin-message" role="alert"></p>
+        <button class="button-dark full-width" type="submit">
+          تسجيل الدخول
+        </button>
       </form>
+    </section>
 
-      <div class="admin-card product-list-card">
-        <div class="list-heading">
-          <h2>المنتجات الحالية</h2>
-          <button class="button button-outline" id="refresh">تحديث</button>
+    <section id="dashboard" hidden>
+      <span class="section-kicker">KHIAL ABAYA / MANAGEMENT</span>
+      <h1 class="admin-title">إدارة المتجر</h1>
+      <p class="admin-subtitle">
+        أضيفي العبايات، ارفعي صورها، وعدّلي تفاصيل المنتجات.
+      </p>
+
+      <section class="admin-panel" style="margin-bottom:25px">
+        <h2 id="formTitle">إضافة عباية جديدة</h2>
+        <p class="admin-subtitle">
+          اختاري صورة واضحة للمنتج من معرض هاتفك.
+        </p>
+
+        <form id="productForm">
+          <input id="productId" type="hidden">
+
+          <div class="admin-form-grid">
+            <div class="form-field">
+              <label for="productName">اسم العباية *</label>
+              <input id="productName" maxlength="120"
+                     placeholder="اسم المنتج" required>
+            </div>
+
+            <div class="form-field">
+              <label for="productCategory">التصنيف *</label>
+              <input id="productCategory" maxlength="80"
+                     placeholder="عبايات كلاسيكية" required>
+            </div>
+
+            <div class="form-field">
+              <label for="productPrice">السعر بالريال اليمني *</label>
+              <input id="productPrice" type="number" min="0"
+                     step="any" placeholder="السعر" required>
+            </div>
+
+            <div class="form-field">
+              <label for="productBadge">شارة اختيارية</label>
+              <input id="productBadge" maxlength="60"
+                     placeholder="وصل حديثًا">
+            </div>
+          </div>
+
+          <div class="form-field">
+            <label for="productFile">صورة العباية من الهاتف</label>
+            <input id="productFile" class="file-input"
+                   type="file" accept="image/jpeg,image/png,image/webp">
+            <small class="upload-hint">
+              الصيغ المدعومة: JPG وPNG وWebP. الحد الأقصى 3 ميجابايت.
+            </small>
+          </div>
+
+          <div id="imagePreviewBox" class="image-preview-box" hidden>
+            <img id="imagePreview" alt="معاينة صورة العباية">
+            <button id="removeImage" class="small-button danger"
+                    type="button">إزالة الصورة المختارة</button>
+          </div>
+
+          <div class="form-field">
+            <label for="productImage">أو رابط صورة HTTPS</label>
+            <input id="productImage" type="url"
+                   placeholder="https://example.com/image.jpg">
+            <small class="upload-hint">
+              إذا اخترت صورة من الهاتف فستُرفع بدل استخدام هذا الرابط.
+            </small>
+          </div>
+
+          <div class="form-field">
+            <label for="productDescription">وصف العباية</label>
+            <textarea id="productDescription" maxlength="1000"
+                      placeholder="اكتبي وصف المنتج وتفاصيله"></textarea>
+          </div>
+
+          <label class="check-row">
+            <input id="productActive" type="checkbox" checked>
+            إظهار المنتج في المتجر
+          </label>
+
+          <p id="formMessage" class="admin-message" role="alert"></p>
+
+          <div class="hero-actions">
+            <button id="saveProduct" class="button-dark" type="submit">
+              حفظ المنتج
+            </button>
+            <button id="resetForm" class="button-gold" type="button">
+              منتج جديد
+            </button>
+          </div>
+        </form>
+      </section>
+
+      <section class="admin-panel">
+        <h2>منتجات المتجر</h2>
+        <p class="admin-subtitle">
+          المنتجات التي أضفتِها أو عدّلتِها.
+        </p>
+        <div id="adminProducts" class="admin-products">
+          <p class="loading-state">جارٍ التحميل...</p>
         </div>
-        <div id="admin-products">سجّلي الدخول لعرض المنتجات.</div>
-      </div>
-    </div>
-  </section>
-</main>
+      </section>
 
-<div class="toast" id="toast"></div>
-<script src="/assets/admin.js" defer></script>
+      <div style="margin-top:20px">
+        <button id="logoutButton" class="small-button" type="button">
+          تسجيل الخروج
+        </button>
+      </div>
+    </section>
+  </main>
+
+  <div id="adminToast" class="toast" role="status" hidden></div>
+  <script src="/assets/admin.js" defer></script>
 </body>
 </html>
