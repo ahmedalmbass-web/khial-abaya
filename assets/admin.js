@@ -231,6 +231,10 @@
     $("productPrice").value = product.price ?? "";
     $("productBadge").value = product.badge || "";
     $("productDescription").value = product.description || "";
+    $("productColors").value = Array.isArray(product.colors)
+  ? product.colors.join("، ") : "";
+$("productSizes").value = Array.isArray(product.sizes)
+  ? product.sizes.join("، ") : "";
     $("productActive").checked = product.active !== false;
     imageInput.value = product.image || "";
     fileInput.value = "";
@@ -298,7 +302,11 @@
         image,
         badge: $("productBadge").value.trim(),
         description: $("productDescription").value.trim(),
-        active: $("productActive").checked
+colors: $("productColors").value.split(/[,،\n]/)
+  .map(value => value.trim()).filter(Boolean),
+sizes: $("productSizes").value.split(/[,،\n]/)
+  .map(value => value.trim()).filter(Boolean),
+active: $("productActive").checked
       };
 
       saveButton.textContent = "جارٍ حفظ المنتج...";
