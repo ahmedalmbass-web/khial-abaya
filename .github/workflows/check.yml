@@ -1,0 +1,42 @@
+
+name: Check Khial Abaya
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    name: Check JavaScript syntax
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Check storefront JavaScript
+        run: node --check assets/store.js
+
+      - name: Check admin JavaScript
+        run: node --check assets/admin.js
+
+      - name: Check Netlify functions
+        shell: bash
+        run: |
+          set -e
+          for file in netlify/functions/*.js; do
+            node --check "$file"
+          done
