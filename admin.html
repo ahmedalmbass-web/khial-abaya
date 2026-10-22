@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex,nofollow">
+  <title>إدارة خيال</title>
+  <link href="https://fonts.googleapis.com/css2?family=Alexandria:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/assets/style.css">
+</head>
+<body class="admin-body">
+
+<header class="admin-top">
+  <a class="brand" href="/">
+    <span class="brand-mark">خ</span>
+    <span><b>خَيَال</b><small>إدارة المتجر</small></span>
+  </a>
+  <a href="/">العودة إلى المتجر ↗</a>
+</header>
+
+<main class="admin-main">
+  <section id="login-panel" class="admin-card login-card">
+    <p class="eyebrow">مساحة خاصة</p>
+    <h1>إدارة المتجر</h1>
+    <p>سجّلي الدخول لإدارة المنتجات والأسعار والمخزون.</p>
+
+    <form id="login-form">
+      <label>كلمة مرور الإدارة
+        <input id="admin-password" type="password" autocomplete="current-password" required minlength="12">
+      </label>
+      <button class="button button-dark full" type="submit">تسجيل الدخول</button>
+      <p id="login-message" class="form-message"></p>
+    </form>
+  </section>
+
+  <section id="dashboard" hidden>
+    <div class="admin-heading">
+      <div>
+        <p class="eyebrow">لوحة التحكم</p>
+        <h1>منتجات خيال</h1>
+        <p>إدارة المنتجات والأسعار والمخزون.</p>
+      </div>
+      <button class="button button-outline" id="logout">تسجيل الخروج</button>
+    </div>
+
+    <div class="admin-layout">
+      <form class="admin-card product-form" id="product-form">
+        <h2 id="form-title">إضافة منتج</h2>
+        <input type="hidden" id="product-id">
+
+        <label>اسم المنتج
+          <input id="p-name" required maxlength="90">
+        </label>
+
+        <label>وصف المنتج
+          <textarea id="p-description" required maxlength="500" rows="3"></textarea>
+        </label>
+
+        <div class="form-two">
+          <label>السعر
+            <input id="p-price" type="number" min="0" step="0.01" required>
+          </label>
+          <label>العملة
+            <select id="p-currency">
+              <option value="ر.ي">ر.ي</option>
+              <option value="ر.س">ر.س</option>
+              <option value="USD">USD</option>
+            </select>
+          </label>
+        </div>
+
+        <label>رابط صورة HTTPS
+          <input id="p-image" type="url" required placeholder="https://">
+        </label>
+
+        <label>الألوان مفصولة بفاصلة
+          <input id="p-colors" required placeholder="أسود، بيج">
+        </label>
+
+        <label>المقاسات مفصولة بفاصلة
+          <input id="p-sizes" required placeholder="54، 56، 58">
+        </label>
+
+        <label>المخزون
+          <input id="p-stock" type="number" min="0" value="1" required>
+        </label>
+
+        <label class="checkbox-label">
+          <input id="p-active" type="checkbox" checked>
+          عرض المنتج في المتجر
+        </label>
+
+        <button class="button button-dark full" type="submit">حفظ المنتج</button>
+        <button class="button button-outline full" type="button" id="cancel-edit" hidden>إلغاء التعديل</button>
+        <p id="product-message" class="form-message"></p>
+      </form>
+
+      <div class="admin-card product-list-card">
+        <div class="list-heading">
+          <h2>المنتجات الحالية</h2>
+          <button class="button button-outline" id="refresh">تحديث</button>
+        </div>
+        <div id="admin-products">سجّلي الدخول لعرض المنتجات.</div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<div class="toast" id="toast"></div>
+<script src="/assets/admin.js" defer></script>
+</body>
+</html>
