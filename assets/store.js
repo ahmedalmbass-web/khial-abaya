@@ -270,9 +270,37 @@
     if (event.key === "Escape" && modal && !modal.hidden) closeModal();
   });
 
+  
   orderButton?.addEventListener("click", () => {
-    if (selectedProduct) sendWhatsApp(selectedProduct, true);
+    if (!selectedProduct) return;
+
+    const hasColors =
+      Array.isArray(selectedProduct.colors) &&
+      selectedProduct.colors.some(
+        value => typeof value === "string" && value.trim()
+      );
+
+    const hasSizes =
+      Array.isArray(selectedProduct.sizes) &&
+      selectedProduct.sizes.some(
+        value => typeof value === "string" && value.trim()
+      );
+
+    if (hasColors && !modalColor?.value) {
+      showToast("يرجى اختيار لون العباية أولًا.");
+      modalColor?.focus();
+      return;
+    }
+
+    if (hasSizes && !modalSize?.value) {
+      showToast("يرجى اختيار مقاس العباية أولًا.");
+      modalSize?.focus();
+      return;
+    }
+
+    sendWhatsApp(selectedProduct, true);
   });
+
 
   generalWhatsApp?.addEventListener("click", event => {
     event.preventDefault();
