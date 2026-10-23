@@ -1,10 +1,13 @@
 const {
+  connectLambda,
   response,
   methodNotAllowed,
   getStoreProducts
 } = require("./lib");
 
 exports.handler = async event => {
+  connectLambda(event);
+  
   if (event.httpMethod === "OPTIONS") {
     return response(204, {});
   }
