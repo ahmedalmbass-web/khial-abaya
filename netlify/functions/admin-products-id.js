@@ -1,4 +1,5 @@
 const {
+  connectLambda,
   response,
   methodNotAllowed,
   requireAdmin,
@@ -7,6 +8,7 @@ const {
 } = require("./lib");
 
 exports.handler = async event => {
+  connectLambda(event);
   const authError = requireAdmin(event);
   if (authError) return authError;
 
