@@ -13,6 +13,10 @@
   const modalColor = document.getElementById("modal-color");
   const modalSize = document.getElementById("modal-size");
   const modalQty = document.getElementById("modal-qty");
+  const modalLength = document.getElementById("modal-length");
+const modalWidth = document.getElementById("modal-width");
+const modalShoulders = document.getElementById("modal-shoulders");
+const modalNotes = document.getElementById("modal-notes");
   const orderButton = document.getElementById("order-button");
   const closeButton = document.getElementById("modal-close");
   const toast = document.getElementById("toast");
