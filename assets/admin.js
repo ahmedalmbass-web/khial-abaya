@@ -55,9 +55,10 @@
   }
 
   function showDashboard() {
-    loginPanel.hidden = true;
-    dashboard.hidden = false;
-    loadProducts();
+  loginPanel.hidden = true;
+  dashboard.hidden = false;
+  loadProducts();
+  loadShowcase();
   }
 
   async function checkSession() {
@@ -333,6 +334,235 @@ active: $("productActive").checked
   });
 
   $("resetForm").addEventListener("click", resetForm);
+
+  
+  // ===== KHIAL ADMIN SHOWCASE =====
+
+  const showcaseForm = $("showcaseForm");
+  const showcaseFile = $("showcaseImage");
+  const showcaseList = $("adminShowcaseList");
+  const showcaseMessage = $("showcaseMessage");
+  const showcaseSaveButton = showcaseForm?.querySelector(
+    'button[type="submit"]'
+  );
+
+  let showcaseImages = [];
+
+  async function loadShowcase() {
+    if (!showcaseList) return;
+
+    showcaseList.textContent = "جارٍ تحميل صور المعرض...";
+
+    try {
+      const result = await api("/api/admin-showcase");
+      showcaseImages = Array.isArray(result.images)
+        ? result.images
+        : [];
+
+      renderShowcase();
+    } catch (error) {
+      showcaseList.textContent = error.message;
+    }
+  }
+
+  function renderShowcase() {
+    if (!showcaseList) return;
+
+    const sorted = [...showcaseImages].sort(
+      (a, b) => Number(a.order || 0) - Number(b.order || 0)
+    );
+
+    if (!sorted.length) {
+      showcaseList.textContent = "لم تتم إضافة صور للمعرض بعد.";
+      return;
+    }
+
+    showcaseList.innerHTML = sorted.map((item, index) => `
+      <article class="admin-product-row admin-showcase-row">
+        <img
+          src="${escapeHTML(item.image)}"
+          alt="${escapeHTML(item.title || "صورة المعرض")}"
+          loading="lazy"
+          style="width:80px;height:100px;object-fit:cover;border-radius:8px"
+        >
+
+        <div>
+          <strong>${escapeHTML(item.title || "صورة بدون عنوان")}</strong>
+          <small>
+            ${item.active === false ? "مخفية" : "ظاهرة"} ·
+            الترتيب: ${index + 1}
+          </small>
+          <small>${escapeHTML(item.description || "")}</small>
+
+          <div class="admin-actions">
+            <button class="small-button" type="button"
+              data-showcase-up="${escapeHTML(item.id)}"
+              ${index === 0 ? "disabled" : ""}>للأعلى ↑</button>
+
+            <button class="small-button" type="button"
+              data-showcase-down="${escapeHTML(item.id)}"
+              ${index === sorted.length - 1 ? "disabled" : ""}>للأسفل ↓</button>
+
+            <button class="small-button" type="button"
+              data-showcase-toggle="${escapeHTML(item.id)}">
+              ${item.active === false ? "إظهار" : "إخفاء"}
+            </button>
+
+            <button class="small-button danger" type="button"
+              data-showcase-delete="${escapeHTML(item.id)}">حذف</button>
+          </div>
+        </div>
+      </article>
+    `).join("");
+  }
+
+  async function updateShowcaseItem(id, changes) {
+    await api(`/api/admin-showcase?id=${encodeURIComponent(id)}`, {
+      method: "PUT",
+      body: JSON.stringify(changes)
+    });
+
+    await loadShowcase();
+  }
+
+  showcaseForm?.addEventListener("submit", async event => {
+    event.preventDefault();
+
+    if (showcaseMessage) showcaseMessage.textContent = "";
+
+    const file = showcaseFile?.files?.[0];
+
+    if (!file) {
+      if (showcaseMessage) {
+        showcaseMessage.textContent = "اختاري صورة أولًا.";
+      }
+      return;
+    }
+
+    const allowed = ["image/jpeg", "image/png", "image/webp"];
+
+    if (!allowed.includes(file.type)) {
+      if (showcaseMessage) {
+        showcaseMessage.textContent = "اختاري صورة JPG أو PNG أو WebP.";
+      }
+      return;
+    }
+
+    if (file.size > 3 * 1024 * 1024) {
+      if (showcaseMessage) {
+        showcaseMessage.textContent = "حجم الصورة يجب ألا يتجاوز 3 ميجابايت.";
+      }
+      return;
+    }
+
+    if (showcaseSaveButton) showcaseSaveButton.disabled = true;
+
+    try {
+      if (showcaseMessage) {
+        showcaseMessage.textContent = "جارٍ رفع الصورة...";
+      }
+
+      const image = await uploadImage(file);
+
+      await api("/api/admin-showcase", {
+        method: "POST",
+        body: JSON.stringify({
+          image,
+          title: $("showcaseTitle")?.value.trim() || "",
+          description: $("showcaseDescription")?.value.trim() || "",
+          active: true
+        })
+      });
+
+      showcaseForm.reset();
+
+      if (showcaseMessage) {
+        showcaseMessage.textContent = "تمت إضافة الصورة إلى المعرض.";
+      }
+
+      await loadShowcase();
+    } catch (error) {
+      if (showcaseMessage) {
+        showcaseMessage.textContent = error.message;
+      }
+    } finally {
+      if (showcaseSaveButton) showcaseSaveButton.disabled = false;
+    }
+  });
+
+  showcaseList?.addEventListener("click", async event => {
+    const button = event.target.closest("button");
+    if (!button) return;
+
+    const id =
+      button.dataset.showcaseUp ||
+      button.dataset.showcaseDown ||
+      button.dataset.showcaseToggle ||
+      button.dataset.showcaseDelete;
+
+    if (!id) return;
+
+    const sorted = [...showcaseImages].sort(
+      (a, b) => Number(a.order || 0) - Number(b.order || 0)
+    );
+
+    const index = sorted.findIndex(item => String(item.id) === String(id));
+    if (index < 0) return;
+
+    button.disabled = true;
+
+    try {
+      if (button.dataset.showcaseDelete) {
+        if (!confirm("هل تريد حذف الصورة من المعرض؟")) return;
+
+        await api(`/api/admin-showcase?id=${encodeURIComponent(id)}`, {
+          method: "DELETE"
+        });
+
+        toast("تم حذف الصورة من المعرض.");
+        await loadShowcase();
+        return;
+      }
+
+      if (button.dataset.showcaseToggle) {
+        const item = sorted[index];
+
+        await updateShowcaseItem(id, {
+          active: item.active === false
+        });
+
+        toast("تم تحديث ظهور الصورة.");
+        return;
+      }
+
+      const otherIndex = button.dataset.showcaseUp
+        ? index - 1
+        : index + 1;
+
+      if (otherIndex < 0 || otherIndex >= sorted.length) return;
+
+      const current = sorted[index];
+      const other = sorted[otherIndex];
+
+      await Promise.all([
+        api(`/api/admin-showcase?id=${encodeURIComponent(current.id)}`, {
+          method: "PUT",
+          body: JSON.stringify({ order: Number(other.order || 0) })
+        }),
+        api(`/api/admin-showcase?id=${encodeURIComponent(other.id)}`, {
+          method: "PUT",
+          body: JSON.stringify({ order: Number(current.order || 0) })
+        })
+      ]);
+
+      await loadShowcase();
+    } catch (error) {
+      toast(error.message);
+    } finally {
+      button.disabled = false;
+    }
+  });
+
 
   checkSession();
 })();
