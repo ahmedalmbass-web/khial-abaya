@@ -80,10 +80,21 @@ function parseBody(event) {
 }
 
 function getCookie(event, name) {
-  const cookieHeader = event.headers?.cookie || event.headers?.Cookie || "";
-  const entry = cookieHeader.split(";").map(v => v.trim())
-    .find(v => v.startsWith(name + "="));
-  return entry ? decodeURIComponent(entry.slice(name.length + 1)) : "";
+  const cookieHeader =
+    event.headers?.cookie || event.headers?.Cookie || "";
+
+  const entry = cookieHeader
+    .split(";")
+    .map(value => value.trim())
+    .find(value => value.startsWith(name + "="));
+
+  if (!entry) return "";
+
+  try {
+    return decodeURIComponent(entry.slice(name.length + 1));
+  } catch (_) {
+    return "";
+  }
 }
 
 function sign(value, secret) {
