@@ -23,9 +23,8 @@ exports.handler = async event => {
   try {
     const store = getStore("khial-images");
     const item = await store.getWithMetadata(id, {
-      type: "arrayBuffer",
-      consistency: "strong"
-    });
+  type: "arrayBuffer"
+});
 
     if (!item || !item.data) {
       return {
