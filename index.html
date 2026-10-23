@@ -180,9 +180,55 @@
         <select id="modal-size"><option value="">اختاري المقاس</option></select>
       </label>
 
-      <label>الكمية
-        <input id="modal-qty" type="number" min="1" max="10" value="1">
-      </label>
+      <div class="measurement-fields">
+  <h3>قياسات العباية</h3>
+  <p>أدخلي القياسات بالسنتيمتر لتفصيل عبايتكِ حسب طلبكِ.</p>
+
+  <label for="modal-length">طول العباية (سم)</label>
+  <input
+    id="modal-length"
+    type="number"
+    min="1"
+    max="250"
+    step="0.5"
+    placeholder="مثال: 145"
+    required
+  >
+
+  <label for="modal-width">عرض العباية (سم)</label>
+  <input
+    id="modal-width"
+    type="number"
+    min="1"
+    max="200"
+    step="0.5"
+    placeholder="مثال: 70"
+    required
+  >
+
+  <label for="modal-shoulders">عرض الأكتاف (سم)</label>
+  <input
+    id="modal-shoulders"
+    type="number"
+    min="1"
+    max="100"
+    step="0.5"
+    placeholder="مثال: 38"
+    required
+  >
+
+  <label for="modal-notes">ملاحظات إضافية (اختياري)</label>
+  <textarea
+    id="modal-notes"
+    rows="3"
+    maxlength="300"
+    placeholder="أي تفاصيل أخرى تريدينها"
+  ></textarea>
+</div>
+
+<label>الكمية
+  <input id="modal-qty" type="number" min="1" max="10" value="1">
+</label>
 
       <button class="button button-dark full" id="order-button">أكملي الطلب عبر واتساب</button>
       <small class="fine-print">لن يُرسل الطلب إلا بعد تأكيدك في واتساب.</small>
