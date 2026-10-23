@@ -1,6 +1,6 @@
 
 const crypto = require("node:crypto");
-const { getStore } = require("@netlify/blobs");
+const { getStore, connectLambda } = require("@netlify/blobs");
 const { response, requireAdmin, parseBody } = require("./lib");
 
 const IMAGE_STORE = "khial-images";
@@ -30,6 +30,7 @@ function validImage(buffer, type) {
 }
 
 exports.handler = async event => {
+  connectLambda(event);
   const authError = requireAdmin(event);
   if (authError) return authError;
 
