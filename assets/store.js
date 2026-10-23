@@ -19,6 +19,36 @@
   const generalWhatsApp = document.getElementById("general-whatsapp");
 
   let products = [];
+  
+  // ===== KHIAL FAVORITES =====
+  const FAVORITES_KEY = "khial_favorite_products";
+  const favoritesButton = document.getElementById("favorites-toggle");
+  let showFavoritesOnly = false;
+  let favoriteIds = new Set();
+
+  try {
+    const savedFavorites = JSON.parse(
+      localStorage.getItem(FAVORITES_KEY) || "[]"
+    );
+
+    if (Array.isArray(savedFavorites)) {
+      favoriteIds = new Set(savedFavorites.map(String));
+    }
+  } catch {
+    favoriteIds = new Set();
+  }
+
+  function saveFavorites() {
+    try {
+      localStorage.setItem(
+        FAVORITES_KEY,
+        JSON.stringify([...favoriteIds])
+      );
+    } catch (error) {
+      console.warn("Could not save Khial favorites:", error);
+    }
+  }
+
   let whatsappNumber = "";
   let selectedProduct = null;
   let toastTimer;
