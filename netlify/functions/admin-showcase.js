@@ -63,14 +63,14 @@ exports.handler = async event => {
     }
 
     if (method === "POST") {
-      const body = parseBody(event);
+  const body = parseBody(event);
 
-      if (!validImagePath(body.image)) {
-        return response(400, {
-          success: false,
-          error: "يرجى رفع صورة صحيحة أولًا."
-        });
-      }
+  if (!body || !validImagePath(body.image)) {
+    return response(400, {
+      success: false,
+      error: "يرجى رفع صورة صحيحة أولًا."
+    });
+  }
 
       const item = {
         id: crypto.randomUUID(),
