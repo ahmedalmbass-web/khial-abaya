@@ -73,7 +73,17 @@ function methodNotAllowed(allowed) {
 
 function parseBody(event) {
   try {
-    return JSON.parse(event.body || "{}");
+    const body = JSON.parse(event.body || "{}");
+
+    if (
+      body === null ||
+      typeof body !== "object" ||
+      Array.isArray(body)
+    ) {
+      return null;
+    }
+
+    return body;
   } catch (_) {
     return null;
   }
