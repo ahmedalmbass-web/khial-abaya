@@ -1,16 +1,16 @@
 const crypto = require("node:crypto");
 
 const {
+  connectLambda,
   response,
   methodNotAllowed,
-  parseBody,
   requireAdmin,
-  validateProduct,
   getStoreProducts,
   saveStoreProducts
 } = require("./lib");
 
 exports.handler = async event => {
+  connectLambda(event);
   const authError = requireAdmin(event);
   if (authError) return authError;
 
