@@ -1,5 +1,5 @@
 const crypto = require("node:crypto");
-const { getStore } = require("@netlify/blobs");
+const { getStore, connectLambda } = require("@netlify/blobs");
 
 const STORE_NAME = "khial-products";
 const PRODUCTS_KEY = "products";
@@ -277,6 +277,7 @@ async function saveStoreProducts(products) {
 }
 
 module.exports = {
+  connectLambda,
   response,
   methodNotAllowed,
   parseBody,
