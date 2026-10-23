@@ -368,4 +368,95 @@ if (modalQty) modalQty.value = "1";
   }
 
   loadProducts();
+
+  
+/* ===== KHIAL SHOWCASE LOADER ===== */
+
+async function loadShowcase() {
+  const track = document.getElementById("showcase-track");
+  if (!track) return;
+
+  try {
+    const res = await fetch("/api/showcase", {
+      headers: { Accept: "application/json" }
+    });
+
+    const data = await res.json();
+
+    if (!res.ok || !data.success) {
+      throw new Error("Showcase request failed");
+    }
+
+    const images = Array.isArray(data.images)
+      ? data.images.filter(item => item && item.image)
+      : [];
+
+    if (images.length === 0) {
+      track.replaceChildren();
+
+      const message = document.createElement("p");
+      message.className = "showcase-loading";
+      message.textContent = "قريبًا... اختيارات جديدة من خيال";
+      track.appendChild(message);
+      track.style.animation = "none";
+      return;
+    }
+
+    track.replaceChildren();
+    track.style.animation = "";
+
+    function createShowcaseCard(item) {
+      const card = document.createElement("figure");
+      card.className = "showcase-card";
+
+      const image = document.createElement("img");
+      image.src = item.image;
+      image.alt = item.title || "عباية أنيقة من خيال";
+      image.loading = "lazy";
+      image.decoding = "async";
+
+      const caption = document.createElement("figcaption");
+      caption.textContent = item.title || "أناقة من خيال";
+
+      card.append(image, caption);
+
+      image.addEventListener("error", () => {
+        card.remove();
+      }, { once: true });
+
+      return card;
+    }
+
+    /*
+     * نكرر الصور داخل المجموعة إذا كان عددها قليلًا،
+     * ثم نكرر المجموعة كاملة لصنع حركة متواصلة.
+     */
+    const sequence = [...images];
+
+    while (sequence.length < 6) {
+      sequence.push(...images);
+    }
+
+    sequence.forEach(item => {
+      track.appendChild(createShowcaseCard(item));
+    });
+
+    sequence.forEach(item => {
+      track.appendChild(createShowcaseCard(item));
+    });
+
+  } catch (error) {
+    console.error("Khial showcase error:", error);
+
+    track.replaceChildren();
+
+    const message = document.createElement("p");
+    message.className = "showcase-loading";
+    message.textContent = "سيعود معرض خيال قريبًا.";
+    track.appendChild(message);
+  }
+}
+
+loadShowcase();
+
 })();
