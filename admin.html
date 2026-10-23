@@ -151,6 +151,52 @@
         </form>
       </section>
 
+      
+<section class="admin-showcase-section" id="adminShowcaseSection">
+  <h2>معرض صور خيال</h2>
+  <p>أضيفي الصور التي ستظهر في المعرض المتحرك بواجهة المتجر.</p>
+
+  <form id="showcaseForm">
+    <label for="showcaseImage">صورة العباية</label>
+    <input
+      id="showcaseImage"
+      name="image"
+      type="file"
+      accept="image/jpeg,image/png,image/webp"
+      required
+    >
+
+    <label for="showcaseTitle">عنوان الصورة (اختياري)</label>
+    <input
+      id="showcaseTitle"
+      name="title"
+      type="text"
+      maxlength="100"
+      placeholder="مثال: أناقة التفاصيل"
+    >
+
+    <label for="showcaseDescription">وصف الصورة (اختياري)</label>
+    <textarea
+      id="showcaseDescription"
+      name="description"
+      maxlength="250"
+      rows="3"
+      placeholder="اكتبي وصفًا قصيرًا للصورة"
+    ></textarea>
+
+    <button type="submit" class="button button-dark">
+      رفع الصورة إلى المعرض
+    </button>
+
+    <p id="showcaseMessage" role="status" aria-live="polite"></p>
+  </form>
+
+  <div id="adminShowcaseList" aria-live="polite">
+    <p>ستظهر صور المعرض هنا بعد ربط لوحة التحكم.</p>
+  </div>
+</section>
+
+
       <section class="admin-panel">
         <h2>منتجات المتجر</h2>
         <p class="admin-subtitle">
