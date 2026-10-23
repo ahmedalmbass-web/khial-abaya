@@ -546,26 +546,20 @@ active: $("productActive").checked
 
       
       
-      const currentOrder = Number(current.order || 0);
-      const otherOrder = Number(other.order || 0);
+            const current = sorted[index];
+      const other = sorted[otherIndex];
 
-      await api(`/api/admin-showcase?id=${encodeURIComponent(current.id)}`, {
-        method: "PUT",
-        body: JSON.stringify({ order: 10000 })
-      });
-
-      await api(`/api/admin-showcase?id=${encodeURIComponent(other.id)}`, {
-        method: "PUT",
-        body: JSON.stringify({ order: currentOrder })
-      });
-
-      await api(`/api/admin-showcase?id=${encodeURIComponent(current.id)}`, {
-        method: "PUT",
-        body: JSON.stringify({ order: otherOrder })
-      });
+      await api(
+        `/api/admin-showcase?id=${encodeURIComponent(current.id)}`,
+        {
+          method: "PUT",
+          body: JSON.stringify({
+            swapWith: other.id
+          })
+        }
+      );
 
       await loadShowcase();
-
 
     } catch (error) {
       toast(error.message);
