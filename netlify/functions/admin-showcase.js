@@ -119,7 +119,7 @@ exports.handler = async event => {
       const item = images[index];
 
       // تبديل ترتيب صورتين في عملية حفظ واحدة
-      if (body.swapWith !== undefined) {
+            if (body.swapWith !== undefined) {
         const otherId = cleanText(body.swapWith, 80);
         const other = images.find(
           image => image.id === otherId
@@ -132,8 +132,23 @@ exports.handler = async event => {
           });
         }
 
-        const currentOrder = Number(item.order || 0);
-        item.order = Number(other.order || 0);
+        const currentOrder = Number(item.order);
+        const otherOrder = Number(other.order);
+
+        if (
+          !Number.isInteger(currentOrder) ||
+          !Number.isInteger(otherOrder) ||
+          currentOrder < 0 ||
+          otherOrder < 0 ||
+          currentOrder === otherOrder
+        ) {
+          return response(400, {
+            success: false,
+            error: "تعذر تبديل ترتيب الصورتين."
+          });
+        }
+
+        item.order = otherOrder;
         other.order = currentOrder;
 
         await saveImages(store, images);
@@ -142,7 +157,7 @@ exports.handler = async event => {
           success: true,
           images: [item, other]
         });
-      }
+            }
 
       if (body.title !== undefined) {
         item.title = cleanText(body.title, 100);
