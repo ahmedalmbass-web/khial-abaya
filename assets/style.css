@@ -2844,3 +2844,152 @@ textarea {
 }
 
 
+/* ===== KHIAL ADMIN SHOWCASE ===== */
+
+.admin-showcase-section {
+  margin: 28px 0;
+  padding: 22px;
+  border: 1px solid #e8dfd2;
+  border-radius: 16px;
+  background: #fffdf9;
+  color: #29271f;
+}
+
+.admin-showcase-section h2 {
+  margin: 0 0 10px;
+  font-size: 20px;
+  font-weight: 600;
+}
+
+.admin-showcase-section > p {
+  margin: 0 0 20px;
+  color: #81786c;
+  font-size: 13px;
+  line-height: 1.9;
+}
+
+#showcaseForm {
+  display: grid;
+  gap: 10px;
+}
+
+#showcaseForm label {
+  margin-top: 8px;
+  color: #655541;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+#showcaseForm input[type="file"],
+#showcaseForm input[type="text"],
+#showcaseForm textarea {
+  box-sizing: border-box;
+  width: 100%;
+  min-width: 0;
+  padding: 12px;
+  border: 1px solid #dfd4c4;
+  border-radius: 10px;
+  background: #fff;
+  color: #29271f;
+  font: inherit;
+  font-size: 14px;
+}
+
+#showcaseForm textarea {
+  resize: vertical;
+  line-height: 1.8;
+}
+
+#showcaseForm input:focus-visible,
+#showcaseForm textarea:focus-visible {
+  outline: 2px solid #ad8a52;
+  outline-offset: 2px;
+}
+
+#showcaseForm button {
+  justify-self: start;
+  margin-top: 8px;
+}
+
+#showcaseMessage {
+  margin: 4px 0;
+  color: #655541;
+  font-size: 13px;
+  line-height: 1.8;
+  overflow-wrap: anywhere;
+}
+
+#adminShowcaseList {
+  display: grid;
+  gap: 14px;
+  margin-top: 24px;
+}
+
+.admin-showcase-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  padding: 14px;
+  border: 1px solid #e8dfd2;
+  border-radius: 12px;
+  background: #fff;
+}
+
+.admin-showcase-row > img {
+  flex: 0 0 80px;
+  max-width: 80px;
+}
+
+.admin-showcase-row > div {
+  flex: 1;
+  min-width: 0;
+}
+
+.admin-showcase-row strong,
+.admin-showcase-row small {
+  display: block;
+  margin-bottom: 7px;
+  overflow-wrap: anywhere;
+  line-height: 1.8;
+}
+
+.admin-showcase-row small {
+  color: #81786c;
+  font-size: 12px;
+}
+
+.admin-showcase-row .admin-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+  margin-top: 10px;
+}
+
+.admin-showcase-row button:disabled {
+  cursor: not-allowed;
+  opacity: .45;
+}
+
+@media (max-width: 480px) {
+  .admin-showcase-section {
+    padding: 15px;
+  }
+
+  .admin-showcase-row {
+    gap: 10px;
+    padding: 10px;
+  }
+
+  .admin-showcase-row > img {
+    flex-basis: 65px;
+    max-width: 65px;
+    height: 86px !important;
+  }
+
+  .admin-showcase-row .admin-actions button {
+    max-width: 100%;
+    font-size: 12px;
+  }
+}
+
+
