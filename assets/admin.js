@@ -535,14 +535,16 @@ active: $("productActive").checked
         return;
       }
 
+      
       const otherIndex = button.dataset.showcaseUp
         ? index - 1
         : index + 1;
 
       if (otherIndex < 0 || otherIndex >= sorted.length) return;
 
-            const current = sorted[index];
+      const current = sorted[index];
       const other = sorted[otherIndex];
+
       await api(
         `/api/admin-showcase?id=${encodeURIComponent(current.id)}`,
         {
