@@ -541,14 +541,8 @@ active: $("productActive").checked
 
       if (otherIndex < 0 || otherIndex >= sorted.length) return;
 
-      const current = sorted[index];
-      const other = sorted[otherIndex];
-
-      
-      
             const current = sorted[index];
       const other = sorted[otherIndex];
-
       await api(
         `/api/admin-showcase?id=${encodeURIComponent(current.id)}`,
         {
