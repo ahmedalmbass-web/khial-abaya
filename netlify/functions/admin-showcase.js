@@ -113,8 +113,36 @@ exports.handler = async event => {
       });
     }
 
+    
     if (method === "PUT") {
+      const body = parseBody(event);
       const item = images[index];
+
+      // تبديل ترتيب صورتين في عملية حفظ واحدة
+      if (body.swapWith !== undefined) {
+        const otherId = cleanText(body.swapWith, 80);
+        const other = images.find(
+          image => image.id === otherId
+        );
+
+        if (!other || other.id === item.id) {
+          return response(400, {
+            success: false,
+            error: "الصورة المطلوبة للتبديل غير صحيحة."
+          });
+        }
+
+        const currentOrder = Number(item.order || 0);
+        item.order = Number(other.order || 0);
+        other.order = currentOrder;
+
+        await saveImages(store, images);
+
+        return response(200, {
+          success: true,
+          images: [item, other]
+        });
+      }
 
       if (body.title !== undefined) {
         item.title = cleanText(body.title, 100);
@@ -164,6 +192,7 @@ exports.handler = async event => {
         image: item
       });
     }
+
 
     if (method === "DELETE") {
       images.splice(index, 1);
