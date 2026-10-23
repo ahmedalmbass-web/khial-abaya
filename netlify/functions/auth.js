@@ -8,7 +8,34 @@ const {
   safeEqual
 } = require("./lib");
 
+function isAllowedOrigin(event) {
+  const origin = event.headers?.origin || event.headers?.Origin;
+
+  // بعض الطلبات لا ترسل Origin؛ نسمح بها مع الاعتماد على حماية الجلسة الحالية.
+  if (!origin) return true;
+
+  const host = event.headers?.host || event.headers?.Host;
+  if (!host) return false;
+
+  try {
+    const parsed = new URL(origin);
+    return parsed.host === host &&
+      (parsed.protocol === "https:" ||
+       process.env.NODE_ENV === "development");
+  } catch {
+    return false;
+  }
+}
+
 exports.handler = async event => {
+    if (
+    event.httpMethod === "POST" &&
+    !isAllowedOrigin(event)
+  ) {
+    return response(403, {
+      error: "مصدر الطلب غير مسموح."
+    });
+    }
   if (event.httpMethod === "GET") {
     return response(200, {
       authenticated: isAuthenticated(event)
