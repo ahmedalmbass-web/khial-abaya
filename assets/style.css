@@ -2992,4 +2992,44 @@ textarea {
   }
 }
 
+.measurement-fields {
+  margin: 12px 0;
+  padding: 12px;
+  background: #f8f5ef;
+  border-radius: 10px;
+}
+
+.measurement-fields h3 {
+  font-size: 15px;
+  margin: 0 0 4px;
+}
+
+.measurement-fields p {
+  font-size: 12px;
+  margin: 0 0 10px;
+  line-height: 1.5;
+}
+
+.measurement-fields label {
+  display: block;
+  font-size: 12px;
+  margin: 8px 0 4px;
+}
+
+.measurement-fields input,
+.measurement-fields textarea {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 9px 10px;
+  font-size: 13px;
+  border: 1px solid #ddd5c8;
+  border-radius: 7px;
+  background: #fff;
+}
+
+.measurement-fields textarea {
+  resize: vertical;
+  min-height: 65px;
+}
+
 
