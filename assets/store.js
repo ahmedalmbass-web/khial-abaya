@@ -277,6 +277,10 @@ fillOptions(modalSize, product.sizes, "المقاس");
 if (modalColor) modalColor.value = "";
 if (modalSize) modalSize.value = "";
 if (modalQty) modalQty.value = "1";
+    if (modalLength) modalLength.value = "";
+if (modalWidth) modalWidth.value = "";
+if (modalShoulders) modalShoulders.value = "";
+if (modalNotes) modalNotes.value = "";
 
 
     if (modal) {
@@ -319,6 +323,13 @@ if (modalQty) modalQty.value = "1";
       );
 
       lines.push(`الكمية: ${quantity}`);
+      lines.push(`طول العباية: ${modalLength.value} سم`);
+lines.push(`عرض العباية: ${modalWidth.value} سم`);
+lines.push(`عرض الأكتاف: ${modalShoulders.value} سم`);
+
+if (modalNotes?.value.trim()) {
+  lines.push(`ملاحظات إضافية: ${modalNotes.value.trim()}`);
+}
 
       if (modalColor?.value) lines.push(`اللون: ${modalColor.value}`);
       if (modalSize?.value) lines.push(`المقاس: ${modalSize.value}`);
@@ -360,6 +371,28 @@ if (modalQty) modalQty.value = "1";
   
   orderButton?.addEventListener("click", () => {
     if (!selectedProduct) return;
+
+    const measurements = [
+  { field: modalLength, label: "طول العباية", max: 250 },
+  { field: modalWidth, label: "عرض العباية", max: 200 },
+  { field: modalShoulders, label: "عرض الأكتاف", max: 100 }
+];
+
+for (const item of measurements) {
+  const rawValue = item.field?.value.trim();
+  const value = Number(rawValue);
+
+  if (
+    !rawValue ||
+    !Number.isFinite(value) ||
+    value <= 0 ||
+    value > item.max
+  ) {
+    showToast(`يرجى إدخال ${item.label} بشكل صحيح بالسنتيمتر.`);
+    item.field?.focus();
+    return;
+  }
+}
 
     const hasColors =
       Array.isArray(selectedProduct.colors) &&
