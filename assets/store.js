@@ -88,13 +88,26 @@
     </div>`;
   }
 
+  
   function productCard(product) {
     const image = String(product.image || "").trim();
+    const id = String(product.id);
+    const isFavorite = favoriteIds.has(id);
 
     return `
       <article class="product-card">
+        <button
+          class="favorite-button ${isFavorite ? "is-favorite" : ""}"
+          type="button"
+          data-favorite-id="${escapeHTML(id)}"
+          aria-label="${isFavorite ? "إزالة من المفضلة" : "إضافة إلى المفضلة"}"
+          aria-pressed="${isFavorite ? "true" : "false"}"
+        >
+          <span aria-hidden="true">${isFavorite ? "♥" : "♡"}</span>
+        </button>
+
         <button class="product-open" type="button"
-          data-product-id="${escapeHTML(product.id)}"
+          data-product-id="${escapeHTML(id)}"
           aria-label="عرض ${escapeHTML(product.name || "العباية")}"
           style="display:block;width:100%;padding:0;border:0;background:transparent;text-align:right">
           <div class="product-image">
@@ -120,6 +133,8 @@
       </article>`;
   }
 
+
+  
   function renderProducts() {
     const term = (search?.value || "").trim().toLocaleLowerCase("ar");
 
@@ -130,20 +145,56 @@
         product.description
       ].join(" ").toLocaleLowerCase("ar");
 
-      return text.includes(term);
+      const matchesSearch = text.includes(term);
+      const isFavorite = favoriteIds.has(String(product.id));
+
+      return matchesSearch && (!showFavoritesOnly || isFavorite);
     });
 
     if (count) {
-      count.textContent = `عدد المنتجات: ${filtered.length}`;
+      count.textContent = showFavoritesOnly
+        ? `العبايات المفضلة: ${filtered.length}`
+        : `عدد المنتجات: ${filtered.length}`;
+    }
+
+    if (favoritesButton) {
+      favoritesButton.setAttribute(
+        "aria-pressed",
+        String(showFavoritesOnly)
+      );
+      favoritesButton.classList.toggle(
+        "is-active",
+        showFavoritesOnly
+      );
+      favoritesButton.innerHTML = `
+        <span aria-hidden="true">${showFavoritesOnly ? "♥" : "♡"}</span>
+        ${showFavoritesOnly ? "عرض الكل" : "المفضلة"}
+      `;
     }
 
     if (!filtered.length) {
+      let message;
+
+      if (showFavoritesOnly) {
+        message = favoriteIds.size
+          ? "لا توجد عبايات مفضلة تطابق البحث."
+          : "لم تضيفي أي عباية إلى المفضلة بعد.";
+      } else {
+        message = products.length
+          ? "جرّبي البحث باسم آخر."
+          : "ستظهر العبايات هنا عند إضافتها من لوحة الإدارة.";
+      }
+
       grid.innerHTML = `
         <div class="empty-state">
-          <strong>${products.length ? "لم نعثر على منتجات" : "المجموعة قيد التجهيز"}</strong>
-          ${products.length
-            ? "جرّبي البحث باسم آخر."
-            : "ستظهر العبايات هنا عند إضافتها من لوحة الإدارة."}
+          <strong>${
+            showFavoritesOnly
+              ? "قائمة المفضلة"
+              : products.length
+                ? "لم نعثر على منتجات"
+                : "المجموعة قيد التجهيز"
+          }</strong>
+          ${message}
         </div>`;
       return;
     }
@@ -396,6 +447,33 @@ if (modalQty) modalQty.value = "1";
       if (count) count.textContent = "تعذّر تحميل المجموعة";
     }
   }
+
+  
+  // ===== KHIAL FAVORITES EVENTS =====
+  favoritesButton?.addEventListener("click", () => {
+    showFavoritesOnly = !showFavoritesOnly;
+    renderProducts();
+  });
+
+  grid.addEventListener("click", event => {
+    const button = event.target.closest("[data-favorite-id]");
+    if (!button || !grid.contains(button)) return;
+
+    event.preventDefault();
+    event.stopPropagation();
+
+    const id = String(button.dataset.favoriteId);
+
+    if (favoriteIds.has(id)) {
+      favoriteIds.delete(id);
+    } else {
+      favoriteIds.add(id);
+    }
+
+    saveFavorites();
+    renderProducts();
+  });
+
 
   loadProducts();
 
