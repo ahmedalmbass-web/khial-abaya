@@ -2390,49 +2390,51 @@ textarea {
 /* شعار خيال الأصلي */
 
 /* شعار خيال — معالجة نظيفة ومتناسقة */
+/* شعار خيال الدائري */
 .site-header .brand,
 .site-footer .brand {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  text-decoration: none;
   background: transparent;
-  border: 0;
+  border: none;
   box-shadow: none;
+  text-decoration: none;
 }
 
 .brand-logo {
   display: block;
-  width: 112px;
+  width: 64px;
   height: 64px;
   flex-shrink: 0;
-  object-fit: contain;
+  object-fit: cover;
   object-position: center;
-  background: transparent;
-  border: 0;
   border-radius: 50%;
-  box-shadow: none;
+  overflow: hidden;
+  background: transparent;
+  border: 2px solid #b99a62;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
 }
 
 .site-header .brand-logo {
-  width: 112px;
+  width: 64px;
   height: 64px;
 }
 
 .site-footer .brand-logo {
-  width: 100px;
-  height: 58px;
+  width: 68px;
+  height: 68px;
 }
 
 @media (max-width: 650px) {
   .site-header .brand-logo {
-    width: 88px;
-    height: 52px;
+    width: 54px;
+    height: 54px;
   }
 
   .site-footer .brand-logo {
-    width: 96px;
-    height: 56px;
+    width: 60px;
+    height: 60px;
   }
 }
