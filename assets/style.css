@@ -2698,3 +2698,149 @@ textarea {
   }
 }
 
+
+/* ===== KHIAL LUXURY FAVORITES ===== */
+
+.product-card {
+  position: relative;
+}
+
+.favorite-button {
+  position: absolute;
+  z-index: 3;
+  top: 12px;
+  left: 12px;
+  display: grid;
+  place-items: center;
+  width: 42px;
+  height: 42px;
+  padding: 0;
+  border: 1px solid rgb(173 138 82 / 25%);
+  border-radius: 50%;
+  background: rgb(255 252 247 / 94%);
+  color: #8f7959;
+  font-size: 25px;
+  line-height: 1;
+  cursor: pointer;
+  box-shadow: 0 5px 18px rgb(41 39 31 / 9%);
+  -webkit-tap-highlight-color: transparent;
+  transition:
+    transform 220ms ease,
+    background 220ms ease,
+    color 220ms ease,
+    border-color 220ms ease,
+    box-shadow 220ms ease;
+}
+
+.favorite-button:hover {
+  transform: scale(1.07);
+  border-color: #ad8a52;
+}
+
+.favorite-button:active {
+  transform: scale(.88);
+}
+
+.favorite-button.is-favorite {
+  background: #ad8a52;
+  border-color: #ad8a52;
+  color: #fffaf3;
+  box-shadow: 0 5px 18px rgb(173 138 82 / 28%);
+}
+
+.favorite-button.is-favorite span {
+  animation: khial-heart-pop 280ms ease;
+}
+
+@keyframes khial-heart-pop {
+  0% { transform: scale(.65); }
+  65% { transform: scale(1.25); }
+  100% { transform: scale(1); }
+}
+
+.collection-controls {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.favorites-toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  min-height: 42px;
+  padding: 9px 15px;
+  border: 1px solid #d8c9b3;
+  border-radius: 30px;
+  background: transparent;
+  color: #655541;
+  font-family: inherit;
+  font-size: 12px;
+  cursor: pointer;
+  transition:
+    background 220ms ease,
+    color 220ms ease,
+    border-color 220ms ease,
+    transform 220ms ease;
+}
+
+.favorites-toggle span {
+  font-size: 19px;
+  line-height: 1;
+}
+
+.favorites-toggle:hover {
+  border-color: #ad8a52;
+  transform: translateY(-1px);
+}
+
+.favorites-toggle.is-active {
+  border-color: #ad8a52;
+  background: #ad8a52;
+  color: #fffaf3;
+}
+
+.favorite-button:focus-visible,
+.favorites-toggle:focus-visible {
+  outline: 2px solid #ad8a52;
+  outline-offset: 3px;
+}
+
+@media (max-width: 600px) {
+  .collection-controls {
+    width: 100%;
+  }
+
+  .collection-controls .search-box {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .favorites-toggle {
+    flex-shrink: 0;
+    padding-inline: 12px;
+  }
+
+  .favorite-button {
+    top: 9px;
+    left: 9px;
+    width: 38px;
+    height: 38px;
+    font-size: 23px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .favorite-button,
+  .favorites-toggle {
+    transition: none;
+  }
+
+  .favorite-button.is-favorite span {
+    animation: none;
+  }
+}
+
+
