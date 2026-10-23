@@ -53,12 +53,18 @@ exports.handler = async event => {
     return response(400, { error: "نوع الصورة غير مدعوم." });
   }
 
-  let bytes;
-  try {
-    bytes = Buffer.from(body.data, "base64");
-  } catch (_) {
-    return response(400, { error: "تعذر قراءة الصورة." });
-  }
+  const base64Pattern =
+  /^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$/;
+
+if (
+  body.data.length === 0 ||
+  body.data.length % 4 !== 0 ||
+  !base64Pattern.test(body.data)
+) {
+  return response(400, { error: "ترميز الصورة غير صالح." });
+}
+
+const bytes = Buffer.from(body.data, "base64");
 
   if (
     bytes.length === 0 ||
