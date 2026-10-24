@@ -225,30 +225,26 @@ if (data.image !== undefined) {
 
 
   
-  for (const field of ["colors", "sizes"]) {
-    if (data[field] !== undefined) {
-      if (
-        !Array.isArray(data[field]) ||
-        data[field].length > 50 ||
-        data[field].some(value =>
-          typeof value !== "string" ||
-          value.trim().length === 0 ||
-          value.trim().length > 60
-        )
-      ) {
-        return field === "colors"
-          ? "قائمة الألوان غير صحيحة."
-          : "قائمة المقاسات غير صحيحة.";
-      }
-
-      const normalized = data[field].map(value => value.trim());
-
-      if (new Set(normalized).size !== normalized.length) {
-        return field === "colors"
-          ? "توجد ألوان مكررة."
-          : "توجد مقاسات مكررة.";
-      }
+  for (const field of ["colors"]) {
+  if (data[field] !== undefined) {
+    if (
+      !Array.isArray(data[field]) ||
+      data[field].length > 50 ||
+      data[field].some(value =>
+        typeof value !== "string" ||
+        value.trim().length === 0 ||
+        value.trim().length > 60
+      )
+    ) {
+      return "قائمة الألوان غير صحيحة.";
     }
+
+    const normalized = data[field].map(value => value.trim());
+
+    if (new Set(normalized).size !== normalized.length) {
+      return "توجد ألوان مكررة.";
+    }
+  }
   }
 
   if (data.active !== undefined && typeof data.active !== "boolean") {
