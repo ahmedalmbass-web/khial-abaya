@@ -31,6 +31,11 @@ return methodNotAllowed(["GET", "POST", "PUT"]);
 }
 
 const body = parseBody(event);
+  if (body && Object.prototype.hasOwnProperty.call(body, "sizes")) {
+  return response(400, {
+    error: "إضافة المقاسات أو تعديلها غير مسموح من لوحة التحكم."
+  });
+  }
 
 if (!body) {
 return response(400, { error: "البيانات المرسلة غير صحيحة." });
