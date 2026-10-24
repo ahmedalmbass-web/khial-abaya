@@ -56,7 +56,7 @@ if (event.httpMethod === "POST") {
     badge: (body.badge || "").trim(),
     description: (body.description || "").trim(),
     colors: Array.isArray(body.colors) ? body.colors : [],
-    sizes: Array.isArray(body.sizes) ? body.sizes : [],
+    
     active: body.active !== false
   };
 
@@ -81,7 +81,7 @@ if (event.httpMethod === "POST") {
     ...(body.badge !== undefined ? { badge: body.badge.trim() } : {}),
     ...(body.description !== undefined ? { description: body.description.trim() } : {}),
     ...(body.colors !== undefined ? { colors: body.colors } : {}),
-    ...(body.sizes !== undefined ? { sizes: body.sizes } : {}),
+    
     ...(body.active !== undefined ? { active: body.active } : {})
   };
 }
