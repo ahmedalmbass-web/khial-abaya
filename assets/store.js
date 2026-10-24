@@ -11,7 +11,7 @@
   const modalDescription = document.getElementById("modal-description");
   const modalPrice = document.getElementById("modal-price");
   const modalColor = document.getElementById("modal-color");
-  const modalSize = document.getElementById("modal-size");
+  
   const modalQty = document.getElementById("modal-qty");
   const modalLength = document.getElementById("modal-length");
 const modalWidth = document.getElementById("modal-width");
@@ -272,10 +272,10 @@ const modalNotes = document.getElementById("modal-notes");
     }
 
     fillOptions(modalColor, product.colors, "اللون");
-fillOptions(modalSize, product.sizes, "المقاس");
+
 
 if (modalColor) modalColor.value = "";
-if (modalSize) modalSize.value = "";
+
 if (modalQty) modalQty.value = "1";
     if (modalLength) modalLength.value = "";
 if (modalWidth) modalWidth.value = "";
@@ -332,7 +332,7 @@ if (modalNotes?.value.trim()) {
 }
 
       if (modalColor?.value) lines.push(`اللون: ${modalColor.value}`);
-      if (modalSize?.value) lines.push(`المقاس: ${modalSize.value}`);
+      
     }
 
     const url =
@@ -400,23 +400,14 @@ for (const item of measurements) {
         value => typeof value === "string" && value.trim()
       );
 
-    const hasSizes =
-      Array.isArray(selectedProduct.sizes) &&
-      selectedProduct.sizes.some(
-        value => typeof value === "string" && value.trim()
-      );
-
+    
     if (hasColors && !modalColor?.value) {
       showToast("يرجى اختيار لون العباية أولًا.");
       modalColor?.focus();
       return;
     }
 
-    if (hasSizes && !modalSize?.value) {
-      showToast("يرجى اختيار مقاس العباية أولًا.");
-      modalSize?.focus();
-      return;
-    }
+    
 
     sendWhatsApp(selectedProduct, true);
   });
